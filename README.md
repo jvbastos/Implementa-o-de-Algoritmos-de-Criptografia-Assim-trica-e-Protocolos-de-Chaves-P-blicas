@@ -1,208 +1,105 @@
-# Implementação do Algoritmo RSA em Python
+# 🔐 Implementação do Algoritmo RSA em Python
 
-## Descrição
-
-Este projeto apresenta uma implementação completa do algoritmo de criptografia assimétrica RSA (Rivest-Shamir-Adleman), desenvolvida manualmente em Python, sem o uso de bibliotecas de criptografia prontas.
-
-O sistema realiza todo o ciclo de vida do RSA:
-
-- geração de números primos grandes;
-- cálculo do módulo `n = p * q`;
-- cálculo do totiente de Euler `φ(n) = (p - 1)(q - 1)`;
-- escolha do expoente público `e`;
-- cálculo do expoente privado `d` por meio do algoritmo de Euclides estendido;
-- cifragem da mensagem com a chave pública;
-- decifragem da mensagem com a chave privada.
-
-Além disso, o programa converte automaticamente textos para blocos numéricos compatíveis com a aritmética modular exigida pelo algoritmo.
+## 📌 Autor
+João Vítor Resende Bastos  
+Curso: Análise e Desenvolvimento de Sistemas – IFTM  
 
 ---
 
-## Fundamentação Teórica
+## 📖 Introdução
 
-### 1. Criptografia Assimétrica
+Este projeto tem como objetivo implementar o algoritmo de criptografia assimétrica RSA (Rivest-Shamir-Adleman) de forma manual, sem o uso de bibliotecas criptográficas prontas.
 
-A criptografia assimétrica utiliza duas chaves diferentes:
-
-- **Chave pública**: usada para cifrar a mensagem;
-- **Chave privada**: usada para decifrar a mensagem.
-
-No RSA, a segurança está baseada na dificuldade computacional de fatorar números inteiros muito grandes, especialmente o produto de dois números primos grandes.
+A proposta consiste em desenvolver todo o ciclo de funcionamento do RSA, incluindo a geração de chaves, cifragem e decifragem de mensagens, demonstrando na prática o conceito de confidencialidade na segurança da informação.
 
 ---
 
-### 2. Números Primos
+## 🎯 Objetivo
 
-Um número primo é um número natural maior que 1 que possui exatamente dois divisores positivos: 1 e ele mesmo.
-
-Exemplos:
-- 2, 3, 5, 7, 11, 13...
-
-No RSA, escolhem-se dois primos grandes `p` e `q`. Esses valores são mantidos em segredo.
+- Implementar o algoritmo RSA do zero;
+- Gerar chaves públicas e privadas;
+- Cifrar mensagens utilizando a chave pública;
+- Decifrar mensagens utilizando a chave privada;
+- Demonstrar o funcionamento da criptografia assimétrica.
 
 ---
 
-### 3. Módulo e Aritmética Modular
+## ⚙️ Funcionamento do RSA
 
-A aritmética modular trabalha com restos de divisão.
+### 1. Geração das chaves
+
+1. Escolhem-se dois números primos grandes:
+   - p e q
+
+2. Calcula-se:
+   - n = p × q
+   - φ(n) = (p - 1)(q - 1)
+
+3. Escolhe-se um número e tal que:
+   - 1 < e < φ(n)
+   - MDC(e, φ(n)) = 1
+
+4. Calcula-se d:
+   - d ≡ e⁻¹ mod φ(n)
+
+---
+
+### 2. Chaves geradas
+
+- Chave pública: (e, n)
+- Chave privada: (d, n)
+
+---
+
+### 3. Cifragem
+
+A mensagem é convertida em números e cifrada:
+
+c = m^e mod n
+
+---
+
+### 4. Decifragem
+
+A mensagem original é recuperada:
+
+m = c^d mod n
+
+---
+
+## 🔢 Conceitos Matemáticos
+
+### Números Primos
+São números divisíveis apenas por 1 e por eles mesmos.
+
+### Aritmética Modular
+Trabalha com restos de divisão.
 
 Exemplo:
-`17 mod 5 = 2`
+17 mod 5 = 2
 
-Isso significa que, ao dividir 17 por 5, o resto é 2.
+### Totiente de Euler
+Representa a quantidade de números coprimos com n.
 
-No RSA, as operações principais são feitas com exponenciação modular:
+φ(n) = (p-1)(q-1)
 
-`c = m^e mod n`
-
-onde:
-- `m` é a mensagem em forma numérica;
-- `e` é o expoente público;
-- `n` é o módulo.
-
-Na decifragem:
-
-`m = c^d mod n`
-
-onde:
-- `d` é o expoente privado.
+### Algoritmo de Euclides Estendido
+Utilizado para calcular o inverso modular (valor de d).
 
 ---
 
-### 4. Totiente de Euler
+## 🖥️ Implementação
 
-Após escolher os primos `p` e `q`, calcula-se:
+O sistema foi desenvolvido em Python e inclui:
 
-`n = p * q`
-
-e
-
-`φ(n) = (p - 1)(q - 1)`
-
-O valor `φ(n)` é fundamental para determinar a relação entre a chave pública e a chave privada.
+- Geração de primos (Miller-Rabin)
+- Cálculo do inverso modular
+- Conversão de texto para blocos numéricos
+- Cifragem e decifragem com exponenciação modular
 
 ---
 
-### 5. Escolha de `e`
-
-O valor `e` deve satisfazer:
-
-- `1 < e < φ(n)`
-- `mdc(e, φ(n)) = 1`
-
-Ou seja, `e` deve ser coprimo de `φ(n)`.
-
-Na prática, costuma-se usar `e = 65537`, pois é eficiente e seguro para implementações convencionais.
-
----
-
-### 6. Cálculo de `d`
-
-O valor `d` é o inverso modular de `e` em relação a `φ(n)`:
-
-`d * e ≡ 1 (mod φ(n))`
-
-Esse valor é calculado usando o **algoritmo de Euclides estendido**.
-
----
-
-### 7. Funcionamento do RSA
-
-#### Geração das chaves
-1. Escolher dois primos grandes `p` e `q`;
-2. Calcular `n = p * q`;
-3. Calcular `φ(n) = (p - 1)(q - 1)`;
-4. Escolher `e` tal que `mdc(e, φ(n)) = 1`;
-5. Calcular `d`, o inverso modular de `e mod φ(n)`.
-
-#### Chaves formadas
-- **Chave pública**: `(e, n)`
-- **Chave privada**: `(d, n)`
-
-#### Cifragem
-A mensagem numérica `m` é cifrada por:
-
-`c = m^e mod n`
-
-#### Decifragem
-O texto cifrado `c` é recuperado por:
-
-`m = c^d mod n`
-
----
-
-## Observação importante
-
-Esta implementação possui finalidade **acadêmica e didática**.
-
-Embora represente corretamente a lógica matemática do RSA, ela **não é adequada para uso em produção real**, pois implementações seguras exigem mecanismos adicionais, como:
-
-- padding seguro (ex.: OAEP);
-- geradores criptograficamente seguros;
-- proteção contra ataques práticos.
-
----
-
-## Tecnologias utilizadas
-
-- Python 3
-- Bibliotecas padrão:
-  - `random`
-  - `math`
-
----
-
-## Como executar
-
-### 1. Clone o repositório
-
-```bash
-git clone https://github.com/SEU-USUARIO/rsa-assimetrico.git
-cd rsa-assimetrico
-```
-
-### 2. Execute o programa
+## ▶️ Como Executar
 
 ```bash
 python rsa.py
-```
-
----
-
-## Funcionalidades disponíveis no menu
-
-- Gerar chaves RSA;
-- Cifrar uma mensagem;
-- Decifrar uma mensagem;
-- Executar uma demonstração automática.
-
----
-
-## Exemplo de uso
-
-### Mensagem original
-```text
-RSA implementado manualmente com sucesso!
-```
-
-### Saída esperada
-- geração de `p` e `q`;
-- cálculo de `n`, `φ(n)`, `e`, `d`;
-- mensagem cifrada em blocos numéricos;
-- recuperação correta da mensagem original com a chave privada.
-
----
-
-## Estrutura do projeto
-
-```text
-rsa-assimetrico/
-├── rsa.py
-└── README.md
-```
-
----
-
-## Autor
-
-Projeto desenvolvido para fins acadêmicos, com foco na compreensão da criptografia assimétrica RSA e sua fundamentação matemática.
